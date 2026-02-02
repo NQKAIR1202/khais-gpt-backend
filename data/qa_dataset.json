@@ -1,0 +1,14 @@
+[
+  {
+    "question": "AI là gì?",
+    "answer": "AI (Artificial Intelligence) là lĩnh vực tạo ra các hệ thống có khả năng học, suy luận và ra quyết định giống con người."
+  },
+  {
+    "question": "AI dùng để làm gì?",
+    "answer": "AI được dùng trong nhận diện hình ảnh, chatbot, xe tự lái, phân tích dữ liệu, y tế, tài chính và an ninh mạng."
+  },
+  {
+    "question": "Machine Learning là gì?",
+    "answer": "Machine Learning là một nhánh của AI cho phép máy học từ dữ liệu mà không cần lập trình cứng."
+  }
+]
