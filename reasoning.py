@@ -1,15 +1,34 @@
-from dataset import find_answer
+# reasoning.py
 
-def reason(question, memory):
-    # 1. Ưu tiên kiến thức đã train
-    dataset_answer = find_answer(question)
-    if dataset_answer:
-        return dataset_answer
+from openai import OpenAI
+import os
 
-    # 2. Nếu có hội thoại trước → suy luận
-    if memory:
-        last_topic = memory[-1]
-        return f"Dựa trên câu hỏi trước ('{last_topic}'), thì '{question}' có thể hiểu là liên quan đến chủ đề đó."
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-    # 3. Không biết → fallback
-    return "Câu này tao chưa được dạy, mày có thể hỏi rõ hơn hoặc tao sẽ search giúp mày."
+def reason_answer(question, memory):
+    """
+    question: câu hỏi hiện tại của user
+    memory: list hội thoại trước đó (role/content)
+    """
+
+    messages = []
+
+    # add memory vào context
+    for m in memory:
+        messages.append({
+            "role": m["role"],
+            "content": m["content"]
+        })
+
+    # add câu hỏi hiện tại
+    messages.append({
+        "role": "user",
+        "content": question
+    })
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages
+    )
+
+    return response.choices[0].message.content
