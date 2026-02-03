@@ -1,35 +1,26 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from memory import get_memory, save_memory
 from reasoning import reason_answer
-from search import google_search
 
 app = Flask(__name__)
-CORS(app)  # 🚨 cho phép frontend gọi API
+CORS(app)
 
 @app.route("/ask", methods=["POST"])
 def ask():
-    try:
-        data = request.json
-        question = data.get("question")
-        session_id = data.get("session_id", "default")
+    data = request.get_json(force=True)
 
-        memory = get_memory(session_id)
-        search_results = google_search(question)
-        answer = reason_answer(question, memory, search_results)
+    question = data.get("question")
+    session_id = data.get("session_id")
 
-        save_memory(session_id, question, answer)
+    if not question:
+        return jsonify({"error": "Missing question"}), 400
 
-        return jsonify({"answer": answer})
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "where": "ask_route"
-        }), 500
+    answer = reason_answer(question, session_id)
 
+    return jsonify({
+        "answer": answer,
+        "session_id": session_id
+    })
 
 if __name__ == "__main__":
-    import os
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
-
+    app.run(host="0.0.0.0", port=10000)
