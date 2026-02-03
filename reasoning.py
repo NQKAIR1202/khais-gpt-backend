@@ -5,7 +5,9 @@ import os
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def reason_answer(question, memory):
+def reason_answer(question, memory, search_results):
+    ...
+
     """
     question: câu hỏi hiện tại của user
     memory: list hội thoại trước đó (role/content)

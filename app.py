@@ -9,20 +9,24 @@ CORS(app)  # 🚨 cho phép frontend gọi API
 
 @app.route("/ask", methods=["POST"])
 def ask():
-    data = request.get_json(force=True)
-    question = data.get("question", "")
-    session_id = data.get("session_id", "default")
+    try:
+        data = request.json
+        question = data.get("question")
+        session_id = data.get("session_id", "default")
 
-    memory = get_memory(session_id)
+        memory = get_memory(session_id)
+        search_results = google_search(question)
+        answer = reason_answer(question, memory, search_results)
 
-    search_results = google_search(question)
-    answer = reason_answer(question, memory, search_results)
+        save_memory(session_id, question, answer)
 
-    save_memory(session_id, question, answer)
+        return jsonify({"answer": answer})
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "where": "ask_route"
+        }), 500
 
-    return jsonify({
-        "answer": answer
-    })
 
 if __name__ == "__main__":
     import os
